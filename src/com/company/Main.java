@@ -5,16 +5,21 @@ import java.util.Random;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 public class Main {
-   static double numCellX = 100;
-   static double numCellY = 100;
+    //num boxes is void X Axis
+   static double numCellX = 10;
+   //num boxes is void Y Axis
+   static double numCellY = 10;
+   //num pixels X Axis
    static double x = 129;
+    //num pixels Y Axis
    static double y = 63;
 
-    //подсчет соседей
+    static double middlePointX = 0;
+    static double middlePointY = 0;
+    //math next generation
     public static void next(Vector<Rect> Rct, double numCellX,double numCellY) {
-        Random rnd = new Random();//дебагинг :)
+        Random rnd = new Random();
         int count = 0;
-        System.out.println(Rct.size());//тоже :)
         System.out.println(x + " " +y);
         for (int i = 0; i < Rct.size(); i++) {
                 if(i>0){
@@ -24,7 +29,7 @@ public class Main {
                 }
             }
         }
-//Создание "вселенной" из "пустых" клеток
+//Create "universe" with "void" boxes
     public static Vector<Rect> draw(double numCellX, double numCellY,double middlePointX,double middlePointY){
         Vector<Rect> Rct = new Vector<Rect>();
         int index = 0;//длина вестора(количество клеток)
@@ -38,6 +43,7 @@ public class Main {
         return Rct;
         }
     public static void main(String[] args) throws InterruptedException {
+        //thread for listening click of keyboard
         Runnable r = ()->{
             while(true) {
                 if(StdDraw.isKeyPressed(KeyEvent.VK_Z)) {
@@ -46,13 +52,20 @@ public class Main {
                 }else if(StdDraw.isKeyPressed(KeyEvent.VK_X)) {
                     x -= 0.000001;
                     y -= 0.0000005;
+                }else if(StdDraw.isKeyPressed(KeyEvent.VK_A)) {
+                    middlePointX -= 0.000001;
+                }else if(StdDraw.isKeyPressed(KeyEvent.VK_D)) {
+                    middlePointX += 0.000001;
+                }else if(StdDraw.isKeyPressed(KeyEvent.VK_W)) {
+                    middlePointY += 0.000001;
+                }else if(StdDraw.isKeyPressed(KeyEvent.VK_S)) {
+                    middlePointY -= 0.000001;
                 }
             }
         };
         Thread tr = new Thread(r);
         tr.start();
-        double middlePointX = x/2.0-numCellX/2.0;
-        double middlePointY = y/2.0-numCellY/2.0;
+
         StdDraw.setCanvasSize(1300, 640);
 
         StdDraw.setPenRadius(0.0001);
@@ -65,7 +78,6 @@ public class Main {
             StdDraw.setYscale(0, y);
             next(draw(numCellX,numCellY,middlePointX,middlePointY), numCellX,numCellY);
             StdDraw.show();
-
             //ограничение по фпс 1:1
             try {
                 TimeUnit.MILLISECONDS.sleep( 100 );
